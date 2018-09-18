@@ -1,0 +1,35 @@
+variables:
+  PROJECT_NAME: tuoluo-admin
+  DOCKER_REGISTRY: 172.26.97.56:5000
+  IMAGE_NAME: "${DOCKER_REGISTRY}/${PROJECT_NAME}"
+  WEBHOOK: "https://oapi.dingtalk.com/robot/send?access_token=0cf65a8ea8f9c098050c2b67eea375454f95a4dfe0e2d5b5479e5f3a27c87340"
+  
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  script:
+    - curl $WEBHOOK -H 'Content-Type:application/json' -X POST -d "{\"msgtype\":\"text\",\"text\":{\"content\":\"$PROJECT_NAME 开始构建\"}}"
+    - docker build -t "${IMAGE_NAME}:lastest" .
+    - docker image tag "${IMAGE_NAME}:lastest" "${IMAGE_NAME}:$CI_COMMIT_SHA"
+    - docker push "${IMAGE_NAME}:lastest"
+    - docker push "${IMAGE_NAME}:$CI_COMMIT_SHA"
+
+dev_deploy:
+  stage: deploy
+  before_script:
+  - docker rm -f $PROJECT_NAME || true
+  script:
+    - docker volume rm $PROJECT_NAME || true
+    - docker run -d --name $PROJECT_NAME --mount source=$PROJECT_NAME,target=/home/app/dist "${IMAGE_NAME}:${CI_COMMIT_SHA}"
+    - curl $WEBHOOK -H 'Content-Type:application/json' -X POST -d "{\"msgtype\":\"text\",\"text\":{\"content\":\"$PROJECT_NAME 测试环境发布成功\"}}"
+  dependencies:
+  - build
+  environment:
+    name: dev
+    url: http://admin.tuoluo.xiaoyanzhang.com/
+  only:
+    refs:
+      - master
