@@ -1,5 +1,5 @@
 variables:
-  PROJECT_NAME: tuoluo-admin
+  PROJECT_NAME: op-d2-start-kit
   DOCKER_REGISTRY: 172.26.97.56:5000
   IMAGE_NAME: "${DOCKER_REGISTRY}/${PROJECT_NAME}"
   WEBHOOK: "https://oapi.dingtalk.com/robot/send?access_token=0cf65a8ea8f9c098050c2b67eea375454f95a4dfe0e2d5b5479e5f3a27c87340"
