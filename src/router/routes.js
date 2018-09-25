@@ -1,26 +1,4 @@
-// layout
-import layoutHeaderAside from '@/layout/header-aside'
-
-const meta = { requiresAuth: true }
-
-/**
- * 在主框架内显示
- */
-const frameIn = [
-  {
-    path: '/',
-    redirect: { name: 'index' },
-    component: layoutHeaderAside,
-    children: [
-      {
-        path: 'index',
-        name: 'index',
-        meta,
-        component: () => import('@/pages/index')
-      },
-    ]
-  }
-]
+import frameIn from '@/router/frameIn'
 
 /**
  * 在主框架之外显示
