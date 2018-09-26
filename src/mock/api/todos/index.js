@@ -5,7 +5,6 @@ const todoDB = Mock.mock({
   'list|90-100': [{
     // 属性 id 是一个自增数，起始值为 1，每次增 1
     'id|+1': 1,
-    'price': '@integer(1, 10000)',
     'title': '@cparagraph(1)',
     'description': '@cparagraph(1)',
     created_at: '@DATE @TIME'
@@ -49,13 +48,10 @@ Mock.mock(/\/api\/todos\/[0-9]+/, 'delete', ({url, type, body}) => {
 Mock.mock(/^\/api\/todos?.[\s\S]*/, 'get', ({url, type, body}) => {
   console.log('分页', url)
   return {
-    code: 0,
-    msg: 'ok',
-    data: {
-      results: todoDB.filter((item, index) => index < 20),
-      total: todoDB.length,
-      page: 1,
-      size: 20
-    }
+    count: todoDB.length,
+    has_next: true,
+    page: 1,
+    page_size: 20,
+    results: todoDB.splice(0, 20)
   }
 })
