@@ -13,15 +13,16 @@ module.exports = {
   lintOnSave: true,
   devServer: {
     publicPath: baseUrl, // 和 baseUrl 保持一致
-    proxy: {
-      '/api': {
-        target: 'http://api.tuoluo.xiaoyanzhang.com',
-        changeOrigin: true,
-        pathRewrite: {
-          ' ^/api ': '/api'
-        }
-      }
-    }
+    // FIXME: set proxy here
+    // proxy: {
+    // '/api': {
+    //   target: 'http://api.tuoluo.xiaoyanzhang.com',
+    //   changeOrigin: true,
+    //   pathRewrite: {
+    //     ' ^/api ': '/api'
+    //   }
+    // }
+    // }
   },
   // webpack 设置
   // 默认设置: https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-service/lib/config/base.js
