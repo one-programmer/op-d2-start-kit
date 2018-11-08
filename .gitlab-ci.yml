@@ -5,6 +5,7 @@ variables:
   
 stages:
   - build
+  - test
   - deploy
 
 build:
@@ -16,6 +17,13 @@ build:
     - docker push "${IMAGE_NAME}:lastest"
     - docker push "${IMAGE_NAME}:$CI_COMMIT_SHA"
 
+test:
+  stage: test
+  dependencies:
+  - build
+  script:
+  - docker run --rm "${IMAGE_NAME}:${CI_COMMIT_SHA}" npm run test:unit
+
 dev_deploy:
   stage: deploy
   before_script:
@@ -25,7 +33,7 @@ dev_deploy:
     - docker run -d --name $CI_PROJECT_NAME --mount source=$CI_PROJECT_NAME,target=/home/app/dist "${IMAGE_NAME}:${CI_COMMIT_SHA}"
     - curl $WEBHOOK -H 'Content-Type:application/json' -X POST -d "{\"message\":\"$CI_PROJECT_NAME 测试环境发布成功\",\"groupId\":\"GROUPCI\"}" || true
   dependencies:
-  - build
+  - test
   environment:
     name: dev
     url: http://${CI_PROJECT_NAME}.xiaoyanzhang.com/
