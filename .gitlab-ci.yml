@@ -1,4 +1,4 @@
-include: 'http://git.xiaoyanzhang.com/one-programmer/templates/raw/mastr/vue/.gitlab-ci.yml'
+include: 'http://git.xiaoyanzhang.com/one-programmer/templates/raw/master/vue/.gitlab-ci.yml'
 
 test:
   stage: test
