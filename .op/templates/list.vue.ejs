@@ -165,7 +165,7 @@ export default {
       dataList: [],
       total: 0,
       page_size: 20,
-      page: 1,
+      page: 0,
       apiPath: '<%= apiPath %>',
       batchOptions: [
         // 通过Banner
@@ -286,7 +286,7 @@ export default {
 
       await this.$axios({
         method: 'delete',
-        url: `${this.apiPath}${row.id}/`
+        url: `${this.apiPath}/${row.id}/`
       })
       this.$notify({
         title: '成功',
