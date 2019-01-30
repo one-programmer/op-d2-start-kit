@@ -1,4 +1,5 @@
 import Mock from 'mockjs'
+import _ from 'lodash'
 
 const todoDB = Mock.mock({
   // 属性 list 的值是一个数组，其中含有 1 到 10 个元素
@@ -13,7 +14,8 @@ const todoDB = Mock.mock({
 
 Mock.mock(/^\/api\/todos/, 'post', ({url, type, body}) => {
   const bodyObj = JSON.parse(body)
-  todoDB.push(body)
+  bodyObj.id = _.last(todoDB).id + 1
+  todoDB.push(bodyObj)
   return {
     code: 0,
     msg: 'ok',
@@ -21,23 +23,34 @@ Mock.mock(/^\/api\/todos/, 'post', ({url, type, body}) => {
   }
 })
 
-Mock.mock(/\/api\/todos\/[0-9]+/, 'get', ({url, type, body}) => {
+const detailReg = /\/api\/todos\/(\d+)+/
+
+const getDetail = (url, detailReg, todoDB) => {
+  const id = Number(detailReg.exec(url)[1])
+  return todoDB.find(item => item.id === id)
+}
+
+Mock.mock(detailReg, 'get', ({url, type, body}) => {
+  const item = getDetail(url, detailReg, todoDB)
   return {
     code: 0,
     msg: 'ok',
-    data: todoDB[0]
+    data: item
   }
 })
 
-Mock.mock(/\/api\/todos\/[0-9]+/, 'put', ({url, type, body}) => {
+Mock.mock(detailReg, 'put', ({url, type, body}) => {
+  const item = getDetail(url, detailReg, todoDB)
   return {
     code: 0,
     msg: 'ok',
-    data: todoDB[0]
+    data: item
   }
 })
 
-Mock.mock(/\/api\/todos\/[0-9]+/, 'delete', ({url, type, body}) => {
+Mock.mock(detailReg, 'delete', ({url, type, body}) => {
+  const index = Number(detailReg.exec(url)[1]) - 1
+  todoDB.splice(index, 1)
   return {
     code: 0,
     msg: 'ok',
@@ -45,13 +58,17 @@ Mock.mock(/\/api\/todos\/[0-9]+/, 'delete', ({url, type, body}) => {
   }
 })
 
-Mock.mock(/^\/api\/todos?.[\s\S]*/, 'get', ({url, type, body}) => {
-  console.log('分页', url)
+const pageReg = /^\/api\/todos?(.[\s\S]*)/
+Mock.mock(pageReg, 'get', ({url, type, body}) => {
+  const params = new URLSearchParams(pageReg.exec(url)[1])
+  const page = Number(params.get('page') || 0)
+  const pageSize = Number(params.get('page_size') || 20)
+  console.log('分页', url, page, pageSize)
   return {
     count: todoDB.length,
     has_next: true,
-    page: 1,
-    page_size: 20,
-    results: todoDB.splice(0, 20)
+    page: page,
+    page_size: pageSize,
+    results: todoDB.slice((page - 1) * pageSize, page * pageSize)
   }
 })
