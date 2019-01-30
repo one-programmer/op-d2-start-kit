@@ -171,7 +171,7 @@ export default {
     async initForm () {
       const result = await this.$axios({
         method: 'get',
-        url: `${this.apiPath}/${this.id}/`
+        url: `${this.apiPath}${this.id}/`
       })
       console.log('fetch detail', this.id, result)
       this.form = result.data
@@ -187,7 +187,7 @@ export default {
           console.log('submit!')
           await this.$axios({
             method: 'put',
-            url: `${this.apiPath}/${this.id}/`,
+            url: `${this.apiPath}${this.id}/`,
             data: this.form
           })
           this.$notify({

@@ -1,5 +1,5 @@
 const { name, title, url } = dataConfig
-const options = { debug: true, compileDebug: true }
+const options = { debug: false, compileDebug: false }
 
 const templateData = [
   { type: 'list', path: `/${name}`, title: `${title} 列表`, icon: 'th-list' },
@@ -140,4 +140,40 @@ fs.readFile(routesPath, { encoding: 'utf8' }, (err, data) => {
   fs.writeFile(routesPath, newLines.join('\n'), (err) => {
     console.log(`write ${routesPath}. error: ${err}`)
   })
+})
+
+// Add api mock
+const fieldsToMockDataStructure = (fields) => {
+  console.log('fieldsToMockDataStructure', fields)
+  const mockListFeilds = {}
+  fields.forEach(field => {
+    if (field.key === 'id') {
+      mockListFeilds["id|+1"] = 1
+    } else if (field.type === 'string' || field.type === 'text') {
+      mockListFeilds[field.key] = "@cparagraph(1)"
+    } else if (field.type === 'datetime') {
+      mockListFeilds[field.key] = "@DATE @TIME"
+    }
+  })
+  return {
+    "list|90-100": [ mockListFeilds ]
+  }
+}
+
+// 创建mock目录
+const mockDirPath = path.join(sourceDir, 'src/mock/api', name)
+if (!fs.existsSync(mockDirPath)) {
+  fs.mkdirSync(mockDirPath, recursive=true)
+}
+
+// 写入结构JSON
+const mockDataStructure = fieldsToMockDataStructure(fields)
+fs.writeFileSync(path.join(mockDirPath, 'data.json'), JSON.stringify(mockDataStructure, null, 4))
+
+// 写入模板文件
+ejs.renderFile(path.join(sourceDir, '.op/templates/rest_mock.ejs'), { name }, options, function (err, str) {
+  if (err) {
+    console.log(`mockjs renderTemplate error.`)
+  }
+  fs.writeFileSync(path.join(mockDirPath, 'index.js'), str)
 })
