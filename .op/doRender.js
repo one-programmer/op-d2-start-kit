@@ -46,11 +46,11 @@ let routesLines = []
 
 const addRouterLines = template => {
   routesLines.push(`      {
-      path: '${template.path}',
-      name: '${name}-${template.type}',
-      component: () => import('@/pages/${name}/${template.type}'),
-      meta: { meta, title: '${template.title}' }
-    },`)
+        path: '${template.path}',
+        name: '${name}-${template.type}',
+        component: () => import('@/pages/${name}/${template.type}'),
+        meta: { meta, title: '${template.title}' }
+      },`)
 }
 
 if (dataConfig.listEnable) {
@@ -171,7 +171,7 @@ const mockDataStructure = fieldsToMockDataStructure(fields)
 fs.writeFileSync(path.join(mockDirPath, 'data.json'), JSON.stringify(mockDataStructure, null, 4))
 
 // 写入模板文件
-ejs.renderFile(path.join(sourceDir, '.op/templates/rest_mock.ejs'), { name }, options, function (err, str) {
+ejs.renderFile(path.join(sourceDir, '.op/templates/rest_mock.ejs'), { restUrl: url }, options, function (err, str) {
   if (err) {
     console.log(`mockjs renderTemplate error.`)
   }
