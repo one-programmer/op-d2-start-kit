@@ -1,5 +1,10 @@
-const { name, title, url } = dataConfig
 const options = { debug: false, compileDebug: false }
+
+console.log('projectConfig2', projectConfig)
+const [ name, title, url ] = Object.keys(projectConfig).map(key => projectConfig[key].value)
+console.log('name', name)
+console.log('title', title)
+console.log('url', url)
 
 const templateData = [
   { type: 'list', path: `/${name}`, title: `${title} 列表`, icon: 'th-list' },

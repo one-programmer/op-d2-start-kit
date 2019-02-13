@@ -6,8 +6,9 @@ import _ from 'lodash'
 import mockData from './data.json'
 
 const itemDB = Mock.mock(mockData).list
+const restUrl = '<%= restUrl %>'
 
-Mock.mock(new RegExp(`^<%= restUrl %>`), 'post', ({url, type, body}) => {
+Mock.mock(new RegExp(`^${restUrl}`), 'post', ({url, type, body}) => {
   const bodyObj = JSON.parse(body)
   bodyObj.id = _.last(itemDB).id + 1
   itemDB.push(bodyObj)
@@ -18,7 +19,7 @@ Mock.mock(new RegExp(`^<%= restUrl %>`), 'post', ({url, type, body}) => {
   }
 })
 
-const detailReg = new RegExp(`^<%= restUrl %>/(\\d+)+`)
+const detailReg = new RegExp(`^${restUrl}/(\\d+)+`)
 
 const getDetail = (url, detailReg, todoDB) => {
   const id = Number(detailReg.exec(url)[1])
@@ -53,7 +54,7 @@ Mock.mock(detailReg, 'delete', ({url, type, body}) => {
   }
 })
 
-const pageReg = new RegExp(`^<%= restUrl %>?(.[\\s\\S]*)`)
+const pageReg = new RegExp(`^${restUrl}?(.[\\s\\S]*)`)
 Mock.mock(pageReg, 'get', ({url, type, body}) => {
   const params = new URLSearchParams(pageReg.exec(url)[1])
   const page = Number(params.get('page') || 1)
