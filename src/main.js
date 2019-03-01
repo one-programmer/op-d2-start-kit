@@ -11,7 +11,8 @@ import '@/mock'
 import i18n from './i18n'
 // 核心插件
 import d2Admin from '@/plugin/d2admin'
-
+// 全局方法
+import method from '@/plugin/method'
 // 菜单和路由设置
 import router from './router'
 import menuHeader from '@/menu/header'
@@ -26,6 +27,8 @@ Vue.use(VueQuillEditor)
 
 // 核心插件
 Vue.use(d2Admin)
+// 全局方法
+Vue.use(method)
 
 new Vue({
   router,

@@ -1,0 +1,14 @@
+{
+  "name": {
+    "label": "目录名称",
+    "value": ""
+  },
+  "title": {
+    "label": "中文含义",
+    "value": ""
+  },
+  "apiPath": {
+    "label": "接口地址",
+    "value": ""
+  }
+}
