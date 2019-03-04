@@ -79,6 +79,12 @@
                   </quill-editor>
                 </template>
             </el-form-item>
+            <%_ } else if (field.type === 'wangEditor') { _%>
+              <el-form-item label="<%= field.name %>" prop="<%= field.key %>">
+                <template>
+                  <op-editor v-model="form.<%= field.key %>"></op-editor>
+                </template>
+            </el-form-item>
             <%_ } else if (field.type === 'text') { _%>
               <el-form-item label="<%= field.name %>" prop="<%= field.key %>">
                 <template>
