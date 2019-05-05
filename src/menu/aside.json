@@ -3,5 +3,21 @@
     "path": "/index",
     "title": "首页",
     "icon": "home"
+  },
+  {
+    "title": "banner管理",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/banner",
+        "title": "banner管理 列表",
+        "icon": "th-list"
+      },
+      {
+        "path": "/banner-add",
+        "title": "banner管理 新增",
+        "icon": "plus"
+      }
+    ]
   }
 ]

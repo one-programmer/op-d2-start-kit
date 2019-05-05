@@ -15,6 +15,24 @@ export default [
         meta,
         component: () => import('@/pages/index')
       },
+      {
+        path: '/banner',
+        name: 'banner-list',
+        component: () => import('@/pages/banner/list'),
+        meta: { meta, title: 'banner管理 列表' }
+      },
+      {
+        path: '/banner/:id/edit',
+        name: 'banner-edit',
+        component: () => import('@/pages/banner/edit'),
+        meta: { meta, title: 'banner管理 编辑' }
+      },
+      {
+        path: '/banner-add',
+        name: 'banner-add',
+        component: () => import('@/pages/banner/add'),
+        meta: { meta, title: 'banner管理 新增' }
+      },
     ]
   },
   {
