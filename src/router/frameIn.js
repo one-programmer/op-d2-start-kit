@@ -16,5 +16,11 @@ export default [
         component: () => import('@/pages/index')
       },
     ]
+  },
+  {
+    path: '/game_details',
+    name: 'game_details',
+    meta,
+    component: () => import('@/pages/game_details')
   }
 ]
