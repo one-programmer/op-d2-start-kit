@@ -3,5 +3,48 @@
     "path": "/index",
     "title": "首页",
     "icon": "home"
+  },
+  {
+    "title": "banner管理",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/banner",
+        "title": "banner列表",
+        "icon": "th-list"
+      },
+      {
+        "path": "/banner-add",
+        "title": "新增banner",
+        "icon": "plus"
+      }
+    ]
+  },
+  {
+    "title": "赛事管理",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/matchManage",
+        "title": "赛事列表",
+        "icon": "th-list"
+      }
+    ]
+  },
+  {
+    "title": "认证后台",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/certification",
+        "title": "认证后台列表",
+        "icon": "th-list"
+      },
+      {
+        "path": "/certification-add",
+        "title": "新增白名单用户",
+        "icon": "plus"
+      }
+    ]
   }
 ]

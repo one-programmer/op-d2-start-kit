@@ -18,3 +18,16 @@
   flex-direction: column;
   justify-content: space-between;
 }
+.flex-j-end {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* 外边距 */
+.m-t-20 {
+  margin-top: 20px;
+}
+.m-b-20 {
+  margin-bottom: 20px;
+}
