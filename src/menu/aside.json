@@ -19,5 +19,16 @@
         "icon": "plus"
       }
     ]
+  },
+  {
+    "title": "赛事管理",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/matchManage",
+        "title": "赛事管理 列表",
+        "icon": "th-list"
+      }
+    ]
   }
 ]

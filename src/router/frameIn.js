@@ -33,6 +33,24 @@ export default [
         component: () => import('@/pages/banner/add'),
         meta: { meta, title: 'banner管理 新增' }
       },
+      {
+        path: '/matchManage',
+        name: 'matchManage-list',
+        component: () => import('@/pages/matchManage/list'),
+        meta: { meta, title: '赛事管理 列表' }
+      },
+      {
+        path: '/matchManage/:id/edit',
+        name: 'matchManage-edit',
+        component: () => import('@/pages/matchManage/edit'),
+        meta: { meta, title: '赛事管理 编辑' }
+      },
+      {
+        path: '/matchManage-add',
+        name: 'matchManage-add',
+        component: () => import('@/pages/matchManage/add'),
+        meta: { meta, title: '赛事管理 新增' }
+      },
     ]
   },
   {

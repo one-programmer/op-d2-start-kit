@@ -3,21 +3,21 @@
     <el-card>
       <el-form :model="form" :rules="rules" ref="form" label-width="100px">
         <el-form-item label="appid" prop="appid">
-          <el-input v-model="form.appid"></el-input>
+          <el-input v-model="form.appid" placeholder="请输入appid"></el-input>
         </el-form-item>
         <el-form-item label="小程序链接" prop="app_href">
-          <el-input v-model="form.app_href"></el-input>
+          <el-input v-model="form.app_href" placeholder="请输入小程序链接"></el-input>
         </el-form-item>
         <el-form-item label="封面图" prop="image_url">
-          <img class="upload-image" v-if="!form.image_url" :src="form.image_url">
-            <div class="btns-wrapper">
-              <el-upload
-                action="/api/upload/?type=pic"
-                :show-file-list="false"
-                :on-success="urlUpload">
-                <div class="btn_add">+</div>
-              </el-upload>
-            </div>
+          <img class="upload-image" v-if="form.image_url" :src="form.image_url">
+          <div v-else class="btns-wrapper">
+            <el-upload
+              action="/api/upload/?type=pic"
+              :show-file-list="false"
+              :on-success="urlUpload">
+              <div class="btn_add">+</div>
+            </el-upload>
+          </div>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -46,7 +46,7 @@ export default {
           {required: true, message: `请输入小程序链接`, trigger: 'blur'}
         ],
         image_url: [
-          {required: true, message: `请上传封面照片`, trigger: 'blur'}
+          {required: true, message: `请上传封面照片`, trigger: 'change'}
         ],
       },
     }
@@ -62,6 +62,7 @@ export default {
       })
       console.log('fetch detail', this.id, result)
       this.form = result.data
+      this.form.image_url = ''
     },
     async onSubmit () {
       this.$refs.form.validate(async (valid) => {
@@ -84,6 +85,12 @@ export default {
         }
       })
     },
+    urlUpload (res, file) {
+      console.log('handleUploadSuccess', res, file)
+      this.form.image_url = res.results.url
+      // this.form.name = res.results.name
+      this.$refs.form.clearValidate([`image_url`])
+    },
     onCancel () {
       let routeName = this.$route.name
       this.$store.commit('d2admin/page/close', {
@@ -94,21 +101,20 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="css" scoped>
 
 .avatar {
   width: 50px;
   display: block;
 }
-.btns-wrapper {
-  .btn_add {
-    width: 80px;
-    height: 50px;
-    line-height: 50px;
-    background-color: rgba(241, 241, 241, 1);
-    font-size: 40px;
-    color: rgba(122, 128, 140, 1)
-  }
+
+.btn_add {
+  width: 80px;
+  height: 50px;
+  line-height: 50px;
+  background-color: rgba(241, 241, 241, 1);
+  font-size: 40px;
+  color: rgba(122, 128, 140, 1)
 }
 
 </style>
