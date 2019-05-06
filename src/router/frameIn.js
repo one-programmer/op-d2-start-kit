@@ -19,37 +19,61 @@ export default [
         path: '/banner',
         name: 'banner-list',
         component: () => import('@/pages/banner/list'),
-        meta: { meta, title: 'banner管理 列表' }
+        meta: { meta, title: 'banner管理' }
       },
       {
         path: '/banner/:id/edit',
         name: 'banner-edit',
         component: () => import('@/pages/banner/edit'),
-        meta: { meta, title: 'banner管理 编辑' }
+        meta: { meta, title: '编辑banner' }
       },
       {
         path: '/banner-add',
         name: 'banner-add',
         component: () => import('@/pages/banner/add'),
-        meta: { meta, title: 'banner管理 新增' }
+        meta: { meta, title: '新增banner' }
       },
       {
         path: '/matchManage',
         name: 'matchManage-list',
         component: () => import('@/pages/matchManage/list'),
-        meta: { meta, title: '赛事管理 列表' }
+        meta: { meta, title: '赛事管理' }
       },
       {
         path: '/matchManage/:id/edit',
         name: 'matchManage-edit',
         component: () => import('@/pages/matchManage/edit'),
-        meta: { meta, title: '赛事管理 编辑' }
+        meta: { meta, title: '编辑赛事' }
       },
       {
         path: '/matchManage-add',
         name: 'matchManage-add',
         component: () => import('@/pages/matchManage/add'),
-        meta: { meta, title: '赛事管理 新增' }
+        meta: { meta, title: '新增赛事' }
+      },
+      {
+        path: '/certification',
+        name: 'certification-list',
+        component: () => import('@/pages/certification/list'),
+        meta: { meta, title: '认证后台' }
+      },
+      {
+        path: '/certification/:id/edit',
+        name: 'certification-edit',
+        component: () => import('@/pages/certification/edit'),
+        meta: { meta, title: '编辑白名单用户' }
+      },
+      {
+        path: '/certification/:id/edit-gal',
+        name: 'certification-edit-gal',
+        component: () => import('@/pages/certification/edit-gal'),
+        meta: { meta, title: '编辑认证用户' }
+      },
+      {
+        path: '/certification-add',
+        name: 'certification-add',
+        component: () => import('@/pages/certification/add'),
+        meta: { meta, title: '新增白名单用户' }
       },
     ]
   },

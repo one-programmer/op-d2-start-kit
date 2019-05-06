@@ -10,12 +10,12 @@
     "children": [
       {
         "path": "/banner",
-        "title": "banner管理 列表",
+        "title": "banner列表",
         "icon": "th-list"
       },
       {
         "path": "/banner-add",
-        "title": "banner管理 新增",
+        "title": "新增banner",
         "icon": "plus"
       }
     ]
@@ -26,8 +26,24 @@
     "children": [
       {
         "path": "/matchManage",
-        "title": "赛事管理 列表",
+        "title": "赛事列表",
         "icon": "th-list"
+      }
+    ]
+  },
+  {
+    "title": "认证后台",
+    "icon": "folder",
+    "children": [
+      {
+        "path": "/certification",
+        "title": "认证后台列表",
+        "icon": "th-list"
+      },
+      {
+        "path": "/certification-add",
+        "title": "新增白名单用户",
+        "icon": "plus"
       }
     ]
   }

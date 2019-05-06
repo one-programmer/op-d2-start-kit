@@ -2,7 +2,7 @@
   <d2-container ref="container">
     <el-card>
       <el-row>
-        <el-button type="primary" @click="handleAdd">新增</el-button>
+        <el-button size="small" type="primary" @click="handleAdd">新增</el-button>
       </el-row>
     </el-card>
     <el-card>
