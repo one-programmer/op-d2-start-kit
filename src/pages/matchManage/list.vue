@@ -13,7 +13,7 @@
             <el-input placeholder="区" v-model="search.area__icontains" clearable></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="赛事名称" v-model="search.search_match_name__icontains" clearable></el-input>
+            <el-input placeholder="赛事名称" v-model="search.name__icontains" clearable></el-input>
           </el-form-item>
           <el-form-item>
             <el-date-picker v-model="search.search_match_time__gte" type="date" placeholder="选择赛事时间">
@@ -59,16 +59,16 @@
             label="赛事id">
           </el-table-column>
           <el-table-column
-            prop="match_name"
+            prop="name"
             label="赛事名称">
           </el-table-column>
           <el-table-column
-            prop="staff_id"
             label="赛事结果">
+            <template slot-scope="scope">{{scope.row.status | game_status_filter}}</template>
           </el-table-column>
           <el-table-column
-            prop="created_at"
             label="赛事时间">
+            <template slot-scope="scope">{{scope.row.created_stamp | time_hms_filter}}</template>
           </el-table-column>
         <el-table-column label="操作" width="350px">
           <template slot-scope="scope">
@@ -116,7 +116,7 @@ export default {
       total: 0,
       page_size: 20,
       page: 1,
-      apiPath: '/api/match',
+      apiPath: '/api/admin/basketball/',
       batchOptions: [
         // 通过Banner
         // { label: '删除', value: 'delete' }
@@ -156,6 +156,8 @@ export default {
       })
     },
     handleSearch () {
+      console.log(this.search)
+      this.getList()
       // 加搜索功能
     },
     doBatchOption () {

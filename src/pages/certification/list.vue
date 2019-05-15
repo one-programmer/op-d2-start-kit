@@ -126,11 +126,11 @@
               label="ID">
             </el-table-column>
             <el-table-column
-              prop="institution_name"
+              prop="nickname"
               label="昵称">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="real_name"
               label="真实姓名">
             </el-table-column>
             <el-table-column
@@ -138,29 +138,23 @@
               label="手机号">
             </el-table-column>
             <el-table-column
-              prop="institution_address"
+              prop="wechat"
               label="社交账号">
             </el-table-column>
             <el-table-column label="审核" width="150px">
-              <template slot-scope="scopeGal">
-                <el-button
-                  v-if="configGal.deleteFlag"
-                  size="mini"
-                  @click="handleEditGal(scopeGal.$index, scopeGal.row)">审核</el-button>
-                <el-button
-                  v-else-if="configGal.deleteFlag"
-                  size="mini"
-                  type="danger"
-                  @click="handleProhibitGal(scopeGal.$index, scopeGal.row)">拒绝</el-button>
-                <el-button
-                  v-else-if="configGal.deleteFlag"
-                  size="mini"
-                  @click="handleEditGal(scopeGal.$index, scopeGal.row)">已通过</el-button>
-                <el-button
-                  v-else
-                  size="mini"
-                  type="danger"
-                  @click="handleProhibitGal(scopeGal.$index, scopeGal.row)">已拒绝</el-button>
+            <!-- verified_status: (1, "未提交认证申请"), (2, "认证中"), (3, "认证通过"), (4, "认证失败") -->
+              <template slot-scope="slot">
+                <template v-if="slot.row.verified_status === 2">
+                  <el-button
+                    size="mini"
+                    @click="handleVerify(1, slot.row.id)">审核</el-button>
+                  <el-button
+                    size="mini"
+                    type="danger"
+                    @click="handleVerify(2, slot.row.id)">拒绝</el-button>
+                </template>
+                <el-tag v-if="slot.row.verified_status === 3" type="success">已通过</el-tag>
+                <el-tag v-if="slot.row.verified_status === 4" type="danger">已拒绝</el-tag>
               </template>
             </el-table-column>
           <el-table-column label="操作" width="150px">
@@ -205,7 +199,7 @@ export default {
       total: 0,
       page_size: 20,
       page: 1,
-      apiPath: '/api/certification',
+      apiPath: '/api/admin/user/',
       batchOptions: [
         // 通过Banner
         // { label: '删除', value: 'delete' }
@@ -220,7 +214,7 @@ export default {
       totalGal: 0,
       page_sizeGal: 20,
       pageGal: 1,
-      apiPathGal: '/api/certification',
+      apiPathGal: '/api/admin/user/',
       batchOptionsGal: [
         // 通过Banner
         // { label: '删除', value: 'delete' }
@@ -261,11 +255,29 @@ export default {
         console.log('get list result', result)
         this.dataList = result.results
         this.total = result.count
+        console.log('data', this.dataList)
       })
     },
     handleSearch () {
       // 白名单用户搜索功能
     },
+
+    async handleVerify (type, id) {
+      if (type === 1) {
+        await this.$axios({
+          method: 'post',
+          url: `${this.apiPath}${id}/verify_pass/`,
+        })
+      }
+      if (type === 2) {
+        await this.$axios({
+          method: 'post',
+          url: `${this.apiPath}${id}/verify_refused/`,
+        })
+      }
+      this.getListGal()
+    },
+
     handleProhibit (index, row) {
       this.$message({
         message: '已禁用',

@@ -26,7 +26,7 @@
 export default {
   data () {
     return {
-      apiPath: '/api/certification',
+      apiPath: '/api/admin/user/',
       form: {
         institution_name: '',
         name: '',
