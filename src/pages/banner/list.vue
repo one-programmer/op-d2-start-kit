@@ -24,9 +24,10 @@
           <el-table-column
             prop="updated_at"
             label="配置时间">
+            <template slot-scope="scope">{{scope.row.created_stamp | time_hms_filter}}</template>
           </el-table-column>
           <el-table-column
-            prop="image_url"
+            prop="href"
             label="链接">
           </el-table-column>
         <el-table-column label="操作" width="150px">
@@ -67,7 +68,7 @@ export default {
       total: 0,
       page_size: 20,
       page: 1,
-      apiPath: '/api/admin/banner',
+      apiPath: '/api/admin/banner/',
       batchOptions: [
         // 通过Banner
         // { label: '删除', value: 'delete' }

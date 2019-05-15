@@ -166,12 +166,12 @@
                 v-if="config.deleteFlag"
                 size="mini"
                 type="danger"
-                @click="handleProhibitGal(scope.$index, scope.row)">禁用</el-button>
+                @click="handleEnable(1, scope.row.id)">禁用</el-button>
               <el-button
                 v-else
                 size="mini"
                 type="warning"
-                @click="handleEnableGal(scope.$index, scope.row)">启用</el-button>
+                @click="handleEnable(2, scope.row.id)">启用</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -262,6 +262,22 @@ export default {
       // 白名单用户搜索功能
     },
 
+    async handleEnable (type, id) {
+      if (type === 1) {
+        await this.$axios({
+          method: 'post',
+          url: `${this.apiPath}${id}/ban/`,
+        })
+      }
+      if (type === 2) {
+        await this.$axios({
+          method: 'post',
+          url: `${this.apiPath}${id}/un_ban/`,
+        })
+      }
+      this.getListGal()
+    },
+
     async handleVerify (type, id) {
       if (type === 1) {
         await this.$axios({
@@ -282,12 +298,6 @@ export default {
       this.$message({
         message: '已禁用',
         type: 'warning'
-      })
-    },
-    handleEnable () {
-      this.$message({
-        message: '启用成功',
-        type: 'success'
       })
     },
     handleAdd () {
