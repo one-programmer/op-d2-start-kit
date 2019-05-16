@@ -2,23 +2,32 @@
   <d2-container>
     <el-card>
       <el-form :model="form" :rules="rules" ref="form" label-width="100px">
-            <el-form-item label="appid" prop="appid">
-              <el-input v-model="form.appid" placeholder="请输入appid"></el-input>
-            </el-form-item>
-            <el-form-item label="小程序链接" prop="app_href">
-              <el-input v-model="form.app_href" placeholder="请输入小程序链接"></el-input>
-            </el-form-item>
-            <el-form-item label="封面图" prop="image_url">
-              <img class="upload-image" v-if="form.image_url" :src="form.image_url">
-              <div v-else class="btns-wrapper">
-                <el-upload
-                  action="/api/upload/?type=pic"
-                  :show-file-list="false"
-                  :on-success="urlUpload">
-                  <div class="btn_add">+</div>
-                </el-upload>
-              </div>
-            </el-form-item>
+        <el-form-item label="标题" prop="title">
+          <el-input v-model="form.title" placeholder="请输入标题"></el-input>
+        </el-form-item>
+        <el-form-item label="appid" prop="appid">
+          <el-input v-model="form.appid" placeholder="请输入appid"></el-input>
+        </el-form-item>
+        <el-form-item label="小程序链接" prop="href">
+          <el-input v-model="form.href" placeholder="请输入小程序链接"></el-input>
+        </el-form-item>
+        <el-form-item label="封面图" prop="image_url">
+          <div class="btns-wrapper">
+            <el-upload
+              class="avatar-uploader"
+              ref="upload"
+              :auto-upload="false"
+              :data="fileData"
+              action="//up.qbox.me/"
+              accept="image/jpg,image/png,image/gif"
+              :show-file-list="false"
+              :on-change="changeImageUpload"
+              :on-success="urlUpload">
+              <img v-if="form.image_url" :src="form.image_url" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            </el-upload>
+          </div>
+        </el-form-item>
         <el-form-item v-if="!this.$route.query.detail">
           <el-button type="primary" @click="onSubmit">保存</el-button>
           <el-button @click="onCancel">取消</el-button>
@@ -32,7 +41,8 @@ export default {
   data () {
     return {
       id: this.$route.params.id,
-      apiPath: '/api/match',
+      apiPath: '/api/admin/game_settings/',
+      fileData: {},
       form: {
         appid: '',
         app_href: '',
@@ -58,7 +68,7 @@ export default {
     async initForm () {
       const result = await this.$axios({
         method: 'get',
-        url: `${this.apiPath}/${this.id}/`
+        url: `${this.apiPath}${this.id}/`
       })
       console.log('fetch detail', this.id, result)
       this.form = result.data
@@ -85,10 +95,25 @@ export default {
       })
     },
     urlUpload (res, file) {
-      console.log('handleUploadSuccess', res, file)
-      this.form.image_url = res.results.url
-      // this.form.name = res.results.name
+      this.form.image_url = this.fileData.url + res.key
       this.$refs.form.clearValidate([`image_url`])
+    },
+
+    async changeImageUpload (file) {
+      try {
+        const result = await this.$axios({
+          method: 'post',
+          url: '/api/qiniu/token/',
+          data: { name: file.name }
+        })
+
+        this.fileData.token = result.token
+        this.fileData.key = result.key
+        this.fileData.url = result.url
+        this.$refs.upload.submit()
+      } catch (error) {
+        console.error('request token failed: ' + error)
+      }
     },
     onCancel () {
       let routeName = this.$route.name

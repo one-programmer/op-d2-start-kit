@@ -12,13 +12,19 @@
           <el-input v-model="form.href" placeholder="请输入小程序链接"></el-input>
         </el-form-item>
         <el-form-item label="封面图" prop="image_url">
-          <img class="upload-image" v-if="form.image_url" :src="form.image_url">
-          <div v-else class="btns-wrapper">
+          <div class="btns-wrapper">
             <el-upload
-              action="/api/upload/?type=pic"
+              class="avatar-uploader"
+              ref="upload"
+              :auto-upload="false"
+              :data="fileData"
+              action="//up.qbox.me/"
+              accept="image/jpg,image/png,image/gif"
               :show-file-list="false"
+              :on-change="changeImageUpload"
               :on-success="urlUpload">
-              <div class="btn_add">+</div>
+              <img v-if="form.image_url" :src="form.image_url" class="avatar">
+              <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
         </el-form-item>
@@ -36,6 +42,7 @@ export default {
     return {
       id: this.$route.params.id,
       apiPath: '/api/admin/banner/',
+      fileData: {},
       form: {
         title: '',
         appid: '',

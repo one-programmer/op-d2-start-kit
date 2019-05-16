@@ -4,23 +4,22 @@
       <el-row>
         <el-form :inline="true">
           <el-form-item>
-            <el-input placeholder="省" v-model="search.province__icontains" clearable></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input placeholder="市" v-model="search.city__icontains" clearable></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input placeholder="区" v-model="search.area__icontains" clearable></el-input>
+            <el-cascader
+              v-model="area"
+              :options="areaData"
+              :props="areaProps"
+              change-on-select
+            ></el-cascader>
           </el-form-item>
           <el-form-item>
             <el-input placeholder="赛事名称" v-model="search.name__icontains" clearable></el-input>
           </el-form-item>
           <el-form-item>
-            <el-date-picker v-model="search.search_match_time__gte" type="date" placeholder="选择赛事时间">
+            <el-date-picker v-model="search.end_time__gte" type="date" placeholder="选择赛事时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="small" @click="handleSearch()">搜索</el-button>
+            <el-button type="primary" size="small" @click="getList(1)">搜索</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -107,9 +106,15 @@
   </d2-container>
 </template>
 <script>
+import dayjs from 'dayjs'
+import areaData from '../../assets/json/area.js'
 export default {
   data () {
     return {
+      areaProps: {
+        value: 'label'
+      },
+      area: [],
       tableHeight: 0,
       config: { searchFlag: false, editFlag: true, deleteFlag: true },
       dataList: [],
@@ -134,11 +139,17 @@ export default {
       }
     })
   },
-  created () {
+  async created () {
+    this.areaData = areaData
     this.getList()
   },
   methods: {
     getList (page = 1) {
+      this.search.end_time__lte = this.search.end_time__gte && dayjs(this.search.end_time__gte).add(1, 'day').toDate()
+      this.search.province = this.area[0] || ''
+      this.search.city = this.area[1] || ''
+      this.search.district = this.area[2] || ''
+
       this.page = page || this.page_size
       let search = this.$op.changeSearch(this.search)
       this.$axios({
@@ -154,11 +165,6 @@ export default {
         this.dataList = result.results
         this.total = result.count
       })
-    },
-    handleSearch () {
-      console.log(this.search)
-      this.getList()
-      // 加搜索功能
     },
     doBatchOption () {
       console.log('批量执行', this.batchOption, this.multipleSelection)
@@ -218,7 +224,7 @@ export default {
     handleCurrentChange (page) {
       console.log('handleCurrentChange', page)
       this.getList(page)
-    }
+    },
   }
 }
 </script>

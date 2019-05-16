@@ -88,23 +88,21 @@
       <el-card ref="searchBoxGal" class="search-box flex-j-end">
         <el-row>
           <el-form :inline="true">
-            <el-form-item>
-              <el-input size="small" placeholder="昵称" v-model="searchGal.search_name__icontains" clearable></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" size="small" @click="handleSearchGal()">搜索</el-button>
-            </el-form-item>
             <el-form-item class="user_status">
-              <el-dropdown>
-                <el-button size="small">
-                  {{ user_status }}<i class="el-icon-arrow-down el-icon--right"></i>
-                </el-button>
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item @click.native="handleCommand">待审核</el-dropdown-item>
-                  <el-dropdown-item @click.native="handleCommand">已拒绝</el-dropdown-item>
-                  <el-dropdown-item @click.native="handleCommand">已通过</el-dropdown-item>
-                </el-dropdown-menu>
-              </el-dropdown>
+              <el-select v-model="searchGal.verified_status" placeholder="请选择">
+                <el-option
+                  v-for="item in options"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item>
+              <el-input size="small" placeholder="昵称" v-model="searchGal.nickname__icontains" clearable></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" size="small" @click="getListGal(1)">搜索</el-button>
             </el-form-item>
           </el-form>
         </el-row>
@@ -163,7 +161,7 @@
                 size="mini"
                 @click="handleEditGal(scope.$index, scope.row)">编辑</el-button>
               <el-button
-                v-if="config.deleteFlag"
+                v-if="!scope.row.has_ban"
                 size="mini"
                 type="danger"
                 @click="handleEnable(1, scope.row.id)">禁用</el-button>
@@ -192,6 +190,16 @@
 export default {
   data () {
     return {
+      options: [{
+        value: '2',
+        label: '待审核'
+      }, {
+        value: '3',
+        label: '已通过'
+      }, {
+        value: '4',
+        label: '已拒绝'
+      }],
       user_type: '认证用户',
       tableHeight: 0,
       config: { searchFlag: false, editFlag: true, deleteFlag: true },
@@ -338,6 +346,7 @@ export default {
     },
     handleSearchGal () {
       // 认证用户搜索功能
+      this.getListGal()
     },
     handleProhibitGal (index, row) {
       this.$message({
