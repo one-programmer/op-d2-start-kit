@@ -30,18 +30,6 @@ export default {
       apiPath: '/api/admin/user/',
       form: {},
       rules: {
-        institution_name: [
-          {required: true, message: `请输入机构名字`, trigger: 'blur'}
-        ],
-        name: [
-          {required: true, message: `请输入姓名`, trigger: 'blur'}
-        ],
-        phone: [
-          {required: true, message: `请输入手机号`, trigger: 'blur'}
-        ],
-        social_accounts: [
-          {required: true, message: `请输入机构地址`, trigger: 'blur'}
-        ],
       },
     }
   },

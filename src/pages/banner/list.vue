@@ -33,15 +33,13 @@
         <el-table-column label="操作" width="150px">
           <template slot-scope="scope">
             <el-button
-              v-if="config.editFlag"
+              v-if="scope.row.is_show"
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
+            <el-tag
               v-else
               size="mini"
-              type="danger"
-              disabled
-              @click="handleDelete(scope.$index, scope.row)">已禁用</el-button>
+              type="danger">已禁用</el-tag>
           </template>
         </el-table-column>
       </el-table>

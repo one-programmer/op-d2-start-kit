@@ -72,23 +72,24 @@
         <el-table-column label="操作" width="350px">
           <template slot-scope="scope">
             <el-button
-              v-if="config.editFlag"
               size="mini"
               @click="handleSeeDetail(scope.$index, scope.row)">查看详情</el-button>
             <el-button
-              v-if="config.editFlag"
               size="mini"
               type="danger"
               @click="handleEdit(scope.$index, scope.row)">配置直播</el-button>
-            <el-button
-              v-if="config.editFlag"
-              size="mini"
-              @click="handleEnable(scope.$index, scope.row)">启用</el-button>
-            <el-button
-              v-else
-              size="mini"
-              type="danger"
-              @click="handleProhibit(scope.$index, scope.row)">禁用</el-button>
+            <template v-if="scope.row.game_settings">
+              <el-button
+                v-if="!scope.row.game_settings.is_show"
+                size="mini"
+                type="danger"
+                @click="handleEnable(scope.$index, scope.row)">禁用</el-button>
+              <el-button
+                v-else
+                size="mini"
+                type="warning"
+                @click="handleEnable(scope.$index, scope.row)">启用</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -173,26 +174,37 @@ export default {
       this.multipleSelection = val
     },
     handleEdit (index, row) {
-      const path = `${this.$route.path}/${row.id}/edit`
+      let path = `${this.$route.path}/${row.id}/edit`
+      let query = {type: 'create'}
+      // 更新配置
+      if (row.game_settings) {
+        path = `${this.$route.path}/${row.game_settings.id}/edit`
+        query = {type: 'edit'}
+      }
       console.log('edit path', path)
-      this.$router.push({ path })
+      this.$router.push({ path, query })
     },
     handleSeeDetail (index, row) {
-      const path = `${this.$route.path}/${row.id}/edit?detail=detail`
+      const path = `${this.$route.path}/${row.id}/details`
       this.$router.push({ path })
     },
-    handleEnable (index, row) {
-      this.$message({
-        message: '启用成功',
-        type: 'success'
-      })
+
+    async handleEnable (index, row) {
+      const path = `/api/admin/game_settings/`
+      if (row.game_settings.is_show) {
+        await this.$axios({
+          method: 'post',
+          url: `${path}${row.game_settings.id}/hide/`,
+        })
+      } else {
+        await this.$axios({
+          method: 'post',
+          url: `${path}${row.game_settings.id}/show/`,
+        })
+      }
+      this.getList()
     },
-    handleProhibit (index, row) {
-      this.$message({
-        message: '已禁用',
-        type: 'warning'
-      })
-    },
+
     async handleDelete (index, row) {
       console.log('删除行：', index, row)
       try {

@@ -43,13 +43,13 @@ export default [
         path: '/matchManage/:id/edit',
         name: 'matchManage-edit',
         component: () => import('@/pages/matchManage/edit'),
-        meta: { meta, title: '编辑赛事' }
+        meta: { meta, title: '配置直播' }
       },
       {
-        path: '/matchManage-add',
-        name: 'matchManage-add',
-        component: () => import('@/pages/matchManage/add'),
-        meta: { meta, title: '新增赛事' }
+        path: '/matchManage/:id/details',
+        name: 'matchManage-details',
+        component: () => import('@/pages/matchManage/details'),
+        meta: { meta, title: '赛事详情' }
       },
       {
         path: '/certification',
@@ -70,7 +70,7 @@ export default [
         meta: { meta, title: '编辑认证用户' }
       },
       {
-        path: '/certification-add',
+        path: '/certification-add/:id',
         name: 'certification-add',
         component: () => import('@/pages/certification/add'),
         meta: { meta, title: '新增白名单用户' }

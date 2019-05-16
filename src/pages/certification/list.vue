@@ -11,13 +11,10 @@
         <el-row>
           <el-form :inline="true">
             <el-form-item>
-              <el-input size="small" placeholder="姓名" v-model="search.search_name__icontains" clearable></el-input>
+              <el-input placeholder="姓名" v-model="search.real_name__icontains" clearable></el-input>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" size="small" @click="handleSearch()">搜索</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button style="width: 100px; margin-left: 20px;" type="primary" size="small" @click="handleAdd()">新增</el-button>
+              <el-button type="primary" size="small" @click="getList(1)">搜索</el-button>
             </el-form-item>
           </el-form>
         </el-row>
@@ -39,11 +36,11 @@
               label="ID">
             </el-table-column>
             <el-table-column
-              prop="institution_name"
+              prop="organization_name"
               label="机构名字">
             </el-table-column>
             <el-table-column
-              prop="name"
+              prop="real_name"
               label="姓名">
             </el-table-column>
             <el-table-column
@@ -51,7 +48,7 @@
               label="手机号">
             </el-table-column>
             <el-table-column
-              prop="institution_address"
+              prop="organization_location"
               label="机构地址">
             </el-table-column>
           <el-table-column label="操作" width="150px">
@@ -60,15 +57,15 @@
                 size="mini"
                 @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
               <el-button
-                v-if="config.deleteFlag"
+                v-if="!scope.row.has_ban"
                 size="mini"
                 type="danger"
-                @click="handleProhibit(scope.$index, scope.row)">禁用</el-button>
+                @click="handleEnable(1, scope.row.id)">禁用</el-button>
               <el-button
                 v-else
                 size="mini"
                 type="warning"
-                @click="handleEnable(scope.$index, scope.row)">启用</el-button>
+                @click="handleEnable(2, scope.row.id)">启用</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -99,7 +96,7 @@
               </el-select>
             </el-form-item>
             <el-form-item>
-              <el-input size="small" placeholder="昵称" v-model="searchGal.nickname__icontains" clearable></el-input>
+              <el-input placeholder="昵称" v-model="searchGal.nickname__icontains" clearable></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" size="small" @click="getListGal(1)">搜索</el-button>
@@ -155,7 +152,7 @@
                 <el-tag v-if="slot.row.verified_status === 4" type="danger">已拒绝</el-tag>
               </template>
             </el-table-column>
-          <el-table-column label="操作" width="150px">
+          <el-table-column label="操作" width="250px">
             <template slot-scope="scope">
               <el-button
                 size="mini"
@@ -170,6 +167,11 @@
                 size="mini"
                 type="warning"
                 @click="handleEnable(2, scope.row.id)">启用</el-button>
+              <el-button
+                v-if="!scope.row.is_white_list"
+                size="mini"
+                type="warning"
+                @click="handleAddWhite(scope.$index, scope.row)">加入白名单</el-button>
             </template>
           </el-table-column>
         </el-table>
@@ -214,7 +216,9 @@ export default {
       ],
       batchOption: '',
       multipleSelection: [],
-      search: {},
+      search: {
+        is_white_list: 1
+      },
       // * 两个列表：认证用户的变量和方法都带Gal' 缩写于 'general'
       tableHeightGal: 0,
       configGal: { searchFlag: false, editFlag: true, deleteFlag: true },
@@ -266,8 +270,10 @@ export default {
         console.log('data', this.dataList)
       })
     },
-    handleSearch () {
-      // 白名单用户搜索功能
+
+    handleAddWhite (index, row) {
+      const path = `certification-add/${row.id}/`
+      this.$router.push(path)
     },
 
     async handleEnable (type, id) {
@@ -283,6 +289,7 @@ export default {
           url: `${this.apiPath}${id}/un_ban/`,
         })
       }
+      this.getList()
       this.getListGal()
     },
 
@@ -302,12 +309,6 @@ export default {
       this.getListGal()
     },
 
-    handleProhibit (index, row) {
-      this.$message({
-        message: '已禁用',
-        type: 'warning'
-      })
-    },
     handleAdd () {
       this.$router.push('/certification-add')
     },
@@ -343,10 +344,6 @@ export default {
         this.dataListGal = result.results
         this.totalGal = result.count
       })
-    },
-    handleSearchGal () {
-      // 认证用户搜索功能
-      this.getListGal()
     },
     handleProhibitGal (index, row) {
       this.$message({

@@ -2,17 +2,17 @@
   <d2-container>
     <el-card>
       <el-form :model="form" :rules="rules" ref="form" label-width="80px">
-            <el-form-item label="机构名字" prop="institution_name">
-              <el-input v-model="form.institution_name"></el-input>
+            <el-form-item label="机构名字" prop="organization_name">
+              <el-input v-model="form.organization_name"></el-input>
             </el-form-item>
-            <el-form-item label="姓名" prop="name">
-              <el-input v-model="form.name"></el-input>
+            <el-form-item label="姓名" prop="real_name">
+              <el-input v-model="form.real_name"></el-input>
             </el-form-item>
             <el-form-item label="手机号" prop="phone">
               <el-input v-model="form.phone"></el-input>
             </el-form-item>
-            <el-form-item label="机构地址" prop="institution_address">
-              <el-input v-model="form.institution_address"></el-input>
+            <el-form-item label="机构地址" prop="organization_location">
+              <el-input v-model="form.organization_location"></el-input>
             </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -25,26 +25,36 @@
 <script>
 export default {
   data () {
+    const phoneValidator = (rule, value, callback) => {
+      console.log(value)
+      if (value && !/^1\d{10}$/g.test(value)) {
+        callback(new Error('请输入正确的手机号格式'))
+      } else {
+        callback()
+      }
+    }
     return {
       id: this.$route.params.id,
-      apiPath: '/api/certification',
+      apiPath: '/api/admin/user/',
       form: {
-        institution_name: '',
-        name: '',
+        organization_name: '',
+        real_name: '',
         phone: '',
-        institution_address: '',
+        organization_location: '',
+        is_white_list: true
       },
       rules: {
-        institution_name: [
+        organization_name: [
           {required: true, message: `请输入机构名字`, trigger: 'blur'}
         ],
-        name: [
+        real_name: [
           {required: true, message: `请输入姓名`, trigger: 'blur'}
         ],
         phone: [
-          {required: true, message: `请输入手机号`, trigger: 'blur'}
+          {required: true, message: `请输入手机号`, trigger: 'blur'},
+          {validator: phoneValidator, trigger: 'blur'}
         ],
-        institution_address: [
+        organization_location: [
           {required: true, message: `请输入机构地址`, trigger: 'blur'}
         ],
       },
@@ -60,15 +70,15 @@ export default {
         url: `${this.apiPath}/${this.id}/`
       })
       console.log('fetch detail', this.id, result)
-      this.form = result.data
+      this.form = result
     },
     async onSubmit () {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
           console.log('submit!')
           await this.$axios({
-            method: 'put',
-            url: `${this.apiPath}/${this.id}/`,
+            method: 'post',
+            url: `${this.apiPath}${this.id}/update_white_list/`,
             data: this.form
           })
           this.$notify({

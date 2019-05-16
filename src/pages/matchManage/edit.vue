@@ -8,10 +8,10 @@
         <el-form-item label="appid" prop="appid">
           <el-input v-model="form.appid" placeholder="请输入appid"></el-input>
         </el-form-item>
-        <el-form-item label="小程序链接" prop="href">
-          <el-input v-model="form.href" placeholder="请输入小程序链接"></el-input>
+        <el-form-item label="小程序链接" prop="page_url">
+          <el-input v-model="form.page_url" placeholder="请输入小程序链接"></el-input>
         </el-form-item>
-        <el-form-item label="封面图" prop="image_url">
+        <el-form-item label="封面图" prop="cover_url">
           <div class="btns-wrapper">
             <el-upload
               class="avatar-uploader"
@@ -23,7 +23,7 @@
               :show-file-list="false"
               :on-change="changeImageUpload"
               :on-success="urlUpload">
-              <img v-if="form.image_url" :src="form.image_url" class="avatar">
+              <img v-if="form.cover_url" :src="form.cover_url" class="avatar">
               <i v-else class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
           </div>
@@ -41,28 +41,36 @@ export default {
   data () {
     return {
       id: this.$route.params.id,
+      type: this.$route.query.type,
       apiPath: '/api/admin/game_settings/',
       fileData: {},
       form: {
+        title: '',
         appid: '',
-        app_href: '',
-        image_url: '',
+        page_url: '',
+        cover_url: '',
       },
       rules: {
+        title: [
+          {required: true, message: `请输入标题`, trigger: 'blur'}
+        ],
         appid: [
           {required: true, message: `请输入appid`, trigger: 'blur'}
         ],
-        app_href: [
+        page_url: [
           {required: true, message: `请输入小程序链接`, trigger: 'blur'}
         ],
-        image_url: [
+        cover_url: [
           {required: true, message: `请上传封面照片`, trigger: 'change'}
         ],
       },
     }
   },
   created () {
-    this.initForm()
+    console.log(this.id, this.type)
+    if (this.type === 'edit') {
+      this.initForm()
+    }
   },
   methods: {
     async initForm () {
@@ -71,15 +79,23 @@ export default {
         url: `${this.apiPath}${this.id}/`
       })
       console.log('fetch detail', this.id, result)
-      this.form = result.data
+      this.form = result
     },
     async onSubmit () {
+      let url = `${this.apiPath}${this.id}/`
+      let method = 'put'
+      // 创建配置
+      if (this.type === 'create') {
+        url = `/api/admin/basketball/${this.id}/create_game_settings/`
+        method = 'post'
+      }
+
       this.$refs.form.validate(async (valid) => {
         if (valid) {
           console.log('submit!')
           await this.$axios({
-            method: 'put',
-            url: `${this.apiPath}/${this.id}/`,
+            method,
+            url,
             data: this.form
           })
           this.$notify({
@@ -95,8 +111,8 @@ export default {
       })
     },
     urlUpload (res, file) {
-      this.form.image_url = this.fileData.url + res.key
-      this.$refs.form.clearValidate([`image_url`])
+      this.form.cover_url = this.fileData.url + res.key
+      this.$refs.form.clearValidate([`cover_url`])
     },
 
     async changeImageUpload (file) {
@@ -127,17 +143,4 @@ export default {
 </script>
 <style>
 
-.avatar {
-  width: 50px;
-  display: block;
-}
-
-.btn_add {
-  width: 80px;
-  height: 50px;
-  line-height: 50px;
-  background-color: rgba(241, 241, 241, 1);
-  font-size: 40px;
-  color: rgba(122, 128, 140, 1)
-}
 </style>
