@@ -6,7 +6,7 @@ import _ from 'lodash'
 import mockData from './data.json'
 
 const itemDB = Mock.mock(mockData).list
-const restUrl = '/api/admin/banner'
+const restUrl = '/api/admin/banner/banner'
 
 Mock.mock(new RegExp(`^${restUrl}`), 'post', ({url, type, body}) => {
   const bodyObj = JSON.parse(body)

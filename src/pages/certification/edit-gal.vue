@@ -2,17 +2,17 @@
   <d2-container>
     <el-card>
       <el-form :model="form" :rules="rules" ref="form" label-width="80px">
-            <el-form-item label="昵称" prop="institution_name">
-              <el-input v-model="form.institution_name"></el-input>
+            <el-form-item label="昵称" prop="nickname">
+              <el-input v-model="form.nickname"></el-input>
             </el-form-item>
-            <el-form-item label="真实姓名" prop="name">
-              <el-input v-model="form.name"></el-input>
+            <el-form-item label="真实姓名" prop="real_name">
+              <el-input v-model="form.real_name"></el-input>
             </el-form-item>
             <el-form-item label="手机号" prop="phone">
               <el-input v-model="form.phone"></el-input>
             </el-form-item>
-            <el-form-item label="社交账号" prop="social_accounts">
-              <el-input v-model="form.social_accounts"></el-input>
+            <el-form-item label="社交账号" prop="wechat">
+              <el-input v-model="form.wechat"></el-input>
             </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">保存</el-button>
@@ -27,26 +27,9 @@ export default {
   data () {
     return {
       id: this.$route.params.id,
-      apiPath: '/api/certification',
-      form: {
-        institution_name: '',
-        name: '',
-        phone: '',
-        social_accounts: '',
-      },
+      apiPath: '/api/admin/user/',
+      form: {},
       rules: {
-        institution_name: [
-          {required: true, message: `请输入机构名字`, trigger: 'blur'}
-        ],
-        name: [
-          {required: true, message: `请输入姓名`, trigger: 'blur'}
-        ],
-        phone: [
-          {required: true, message: `请输入手机号`, trigger: 'blur'}
-        ],
-        social_accounts: [
-          {required: true, message: `请输入机构地址`, trigger: 'blur'}
-        ],
       },
     }
   },
@@ -60,7 +43,7 @@ export default {
         url: `${this.apiPath}/${this.id}/`
       })
       console.log('fetch detail', this.id, result)
-      this.form = result.data
+      this.form = result
     },
     async onSubmit () {
       this.$refs.form.validate(async (valid) => {

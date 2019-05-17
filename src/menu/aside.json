@@ -39,11 +39,6 @@
         "path": "/certification",
         "title": "认证后台列表",
         "icon": "th-list"
-      },
-      {
-        "path": "/certification-add",
-        "title": "新增白名单用户",
-        "icon": "plus"
       }
     ]
   }

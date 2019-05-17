@@ -4,23 +4,22 @@
       <el-row>
         <el-form :inline="true">
           <el-form-item>
-            <el-input placeholder="省" v-model="search.province__icontains" clearable></el-input>
+            <el-cascader
+              v-model="area"
+              :options="areaData"
+              :props="areaProps"
+              change-on-select
+            ></el-cascader>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="市" v-model="search.city__icontains" clearable></el-input>
+            <el-input placeholder="赛事名称" v-model="search.name__icontains" clearable></el-input>
           </el-form-item>
           <el-form-item>
-            <el-input placeholder="区" v-model="search.area__icontains" clearable></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-input placeholder="赛事名称" v-model="search.search_match_name__icontains" clearable></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-date-picker v-model="search.search_match_time__gte" type="date" placeholder="选择赛事时间">
+            <el-date-picker v-model="search.end_time__gte" type="date" placeholder="选择赛事时间">
             </el-date-picker>
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" size="small" @click="handleSearch()">搜索</el-button>
+            <el-button type="primary" size="small" @click="getList(1)">搜索</el-button>
           </el-form-item>
         </el-form>
       </el-row>
@@ -59,37 +58,38 @@
             label="赛事id">
           </el-table-column>
           <el-table-column
-            prop="match_name"
+            prop="name"
             label="赛事名称">
           </el-table-column>
           <el-table-column
-            prop="staff_id"
             label="赛事结果">
+            <template slot-scope="scope">{{scope.row.status | game_status_filter}}</template>
           </el-table-column>
           <el-table-column
-            prop="created_at"
             label="赛事时间">
+            <template slot-scope="scope">{{scope.row.created_stamp | time_hms_filter}}</template>
           </el-table-column>
         <el-table-column label="操作" width="350px">
           <template slot-scope="scope">
             <el-button
-              v-if="config.editFlag"
               size="mini"
               @click="handleSeeDetail(scope.$index, scope.row)">查看详情</el-button>
             <el-button
-              v-if="config.editFlag"
               size="mini"
               type="danger"
               @click="handleEdit(scope.$index, scope.row)">配置直播</el-button>
-            <el-button
-              v-if="config.editFlag"
-              size="mini"
-              @click="handleEnable(scope.$index, scope.row)">启用</el-button>
-            <el-button
-              v-else
-              size="mini"
-              type="danger"
-              @click="handleProhibit(scope.$index, scope.row)">禁用</el-button>
+            <template v-if="scope.row.game_settings">
+              <el-button
+                v-if="!scope.row.game_settings.is_show"
+                size="mini"
+                type="danger"
+                @click="handleEnable(scope.$index, scope.row)">禁用</el-button>
+              <el-button
+                v-else
+                size="mini"
+                type="warning"
+                @click="handleEnable(scope.$index, scope.row)">启用</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -107,16 +107,22 @@
   </d2-container>
 </template>
 <script>
+import dayjs from 'dayjs'
+import areaData from '../../assets/json/area.js'
 export default {
   data () {
     return {
+      areaProps: {
+        value: 'label'
+      },
+      area: [],
       tableHeight: 0,
       config: { searchFlag: false, editFlag: true, deleteFlag: true },
       dataList: [],
       total: 0,
       page_size: 20,
       page: 1,
-      apiPath: '/api/match',
+      apiPath: '/api/admin/basketball/',
       batchOptions: [
         // 通过Banner
         // { label: '删除', value: 'delete' }
@@ -134,11 +140,17 @@ export default {
       }
     })
   },
-  created () {
+  async created () {
+    this.areaData = areaData
     this.getList()
   },
   methods: {
     getList (page = 1) {
+      this.search.end_time__lte = this.search.end_time__gte && dayjs(this.search.end_time__gte).add(1, 'day').toDate()
+      this.search.province = this.area[0] || ''
+      this.search.city = this.area[1] || ''
+      this.search.district = this.area[2] || ''
+
       this.page = page || this.page_size
       let search = this.$op.changeSearch(this.search)
       this.$axios({
@@ -155,9 +167,6 @@ export default {
         this.total = result.count
       })
     },
-    handleSearch () {
-      // 加搜索功能
-    },
     doBatchOption () {
       console.log('批量执行', this.batchOption, this.multipleSelection)
     },
@@ -165,26 +174,37 @@ export default {
       this.multipleSelection = val
     },
     handleEdit (index, row) {
-      const path = `${this.$route.path}/${row.id}/edit`
+      let path = `${this.$route.path}/${row.id}/edit`
+      let query = {type: 'create'}
+      // 更新配置
+      if (row.game_settings) {
+        path = `${this.$route.path}/${row.game_settings.id}/edit`
+        query = {type: 'edit'}
+      }
       console.log('edit path', path)
-      this.$router.push({ path })
+      this.$router.push({ path, query })
     },
     handleSeeDetail (index, row) {
-      const path = `${this.$route.path}/${row.id}/edit?detail=detail`
+      const path = `${this.$route.path}/${row.id}/details`
       this.$router.push({ path })
     },
-    handleEnable (index, row) {
-      this.$message({
-        message: '启用成功',
-        type: 'success'
-      })
+
+    async handleEnable (index, row) {
+      const path = `/api/admin/game_settings/`
+      if (row.game_settings.is_show) {
+        await this.$axios({
+          method: 'post',
+          url: `${path}${row.game_settings.id}/hide/`,
+        })
+      } else {
+        await this.$axios({
+          method: 'post',
+          url: `${path}${row.game_settings.id}/show/`,
+        })
+      }
+      this.getList()
     },
-    handleProhibit (index, row) {
-      this.$message({
-        message: '已禁用',
-        type: 'warning'
-      })
-    },
+
     async handleDelete (index, row) {
       console.log('删除行：', index, row)
       try {
@@ -216,7 +236,7 @@ export default {
     handleCurrentChange (page) {
       console.log('handleCurrentChange', page)
       this.getList(page)
-    }
+    },
   }
 }
 </script>

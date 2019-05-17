@@ -24,23 +24,22 @@
           <el-table-column
             prop="updated_at"
             label="配置时间">
+            <template slot-scope="scope">{{scope.row.created_stamp | time_hms_filter}}</template>
           </el-table-column>
           <el-table-column
-            prop="image_url"
+            prop="href"
             label="链接">
           </el-table-column>
         <el-table-column label="操作" width="150px">
           <template slot-scope="scope">
             <el-button
-              v-if="config.editFlag"
+              v-if="scope.row.is_show"
               size="mini"
               @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-            <el-button
+            <el-tag
               v-else
               size="mini"
-              type="danger"
-              disabled
-              @click="handleDelete(scope.$index, scope.row)">已禁用</el-button>
+              type="danger">已禁用</el-tag>
           </template>
         </el-table-column>
       </el-table>
@@ -67,7 +66,7 @@ export default {
       total: 0,
       page_size: 20,
       page: 1,
-      apiPath: '/api/admin/banner',
+      apiPath: '/api/admin/banner/',
       batchOptions: [
         // 通过Banner
         // { label: '删除', value: 'delete' }
