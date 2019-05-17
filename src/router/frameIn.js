@@ -76,11 +76,5 @@ export default [
         meta: { meta, title: '新增白名单用户' }
       },
     ]
-  },
-  {
-    path: '/game_details',
-    name: 'game_details',
-    meta,
-    component: () => import('@/pages/game_details')
   }
 ]

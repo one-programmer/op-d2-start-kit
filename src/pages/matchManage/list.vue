@@ -80,7 +80,7 @@
               @click="handleEdit(scope.$index, scope.row)">配置直播</el-button>
             <template v-if="scope.row.game_settings">
               <el-button
-                v-if="!scope.row.game_settings.is_show"
+                v-if="scope.row.game_settings.is_show"
                 size="mini"
                 type="danger"
                 @click="handleEnable(scope.$index, scope.row)">禁用</el-button>
