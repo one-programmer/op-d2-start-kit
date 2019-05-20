@@ -6,7 +6,14 @@
           <el-input v-model="form.title" placeholder="请输入标题"></el-input>
         </el-form-item>
         <el-form-item label="appid" prop="appid">
-          <el-input v-model="form.appid" placeholder="请输入appid"></el-input>
+          <el-select v-model="form.appid" placeholder="请选择">
+            <el-option
+              v-for="item in appidOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="小程序链接" prop="page_url">
           <el-input v-model="form.page_url" placeholder="请输入小程序链接"></el-input>
@@ -37,6 +44,7 @@
   </d2-container>
 </template>
 <script>
+import appidOptions from '../../assets/json/appid'
 export default {
   data () {
     return {
@@ -44,6 +52,7 @@ export default {
       type: this.$route.query.type,
       apiPath: '/api/admin/game_settings/',
       fileData: {},
+      appidOptions,
       form: {
         title: '',
         appid: '',
@@ -55,10 +64,7 @@ export default {
           {required: true, message: `请输入标题`, trigger: 'blur'}
         ],
         appid: [
-          {required: true, message: `请输入appid`, trigger: 'blur'}
-        ],
-        page_url: [
-          {required: true, message: `请输入小程序链接`, trigger: 'blur'}
+          {required: true, message: `请选择小程序名称`, trigger: 'change'}
         ],
         cover_url: [
           {required: true, message: `请上传封面照片`, trigger: 'change'}
