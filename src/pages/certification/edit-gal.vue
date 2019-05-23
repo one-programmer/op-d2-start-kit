@@ -44,6 +44,7 @@ export default {
       })
       console.log('fetch detail', this.id, result)
       this.form = result
+      console.log('test')
     },
     async onSubmit () {
       this.$refs.form.validate(async (valid) => {
