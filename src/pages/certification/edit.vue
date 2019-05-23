@@ -35,7 +35,7 @@ export default {
     }
     return {
       id: this.$route.params.id,
-      apiPath: '/api/admin/user/',
+      apiPath: '/api/admin/user',
       form: {
         organization_name: '',
         real_name: '',
@@ -78,7 +78,7 @@ export default {
           console.log('submit!')
           await this.$axios({
             method: 'post',
-            url: `${this.apiPath}${this.id}/update_white_list/`,
+            url: `${this.apiPath}/${this.id}/update_white_list/`,
             data: this.form
           })
           this.$notify({
