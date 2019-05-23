@@ -27,7 +27,7 @@ export default {
   data () {
     return {
       id: this.$route.params.id,
-      apiPath: '/api/admin/user/',
+      apiPath: '/api/admin/user',
       form: {},
       rules: {
       },
@@ -44,7 +44,6 @@ export default {
       })
       console.log('fetch detail', this.id, result)
       this.form = result
-      console.log('test')
     },
     async onSubmit () {
       this.$refs.form.validate(async (valid) => {
