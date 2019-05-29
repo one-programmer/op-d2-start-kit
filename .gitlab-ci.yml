@@ -1,6 +1,5 @@
 include: 'http://git.xiaoyanzhang.com/one-programmer/templates/raw/master/vue/.gitlab-ci.yml'
-variables:
-  PRO_HOST: tcp://47.104.81.121:22375
+
 test:
   stage: test
   dependencies:
@@ -12,7 +11,6 @@ test:
     - shell
   except:
     - schedules
-
 
 pro1_deploy:
   extends: .pro_deploy
