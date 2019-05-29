@@ -12,3 +12,14 @@ test:
     - shell
   except:
     - schedules
+
+
+pro1_deploy:
+  extends: .pro_deploy
+  variables:
+    PRO_HOST: 47.103.69.160
+
+pro2_deploy:
+  extends: .pro_deploy
+  variables:
+    PRO_HOST: 47.103.85.240
