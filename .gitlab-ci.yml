@@ -13,11 +13,11 @@ test:
     - schedules
 
 pro1_deploy:
-  extends: .pro_deploy
+  extends: .production_deploy
   variables:
-    PRO_HOST: 47.103.69.160
+    PRO_HOST: tcp://47.103.69.160:22375
 
 pro2_deploy:
-  extends: .pro_deploy
+  extends: .production_deploy
   variables:
-    PRO_HOST: 47.103.85.240
+    PRO_HOST: tcp://47.103.85.240:22375
