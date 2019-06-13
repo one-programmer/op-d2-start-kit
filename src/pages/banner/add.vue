@@ -2,10 +2,20 @@
   <d2-container>
     <el-card>
       <el-form :model="form" :rules="rules" ref="form" label-width="100px">
+        <el-form-item label="跳转类型" prop="href_type">
+          <el-select v-model="form.href_type" placeholder="请选择">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="标题" prop="title">
           <el-input v-model="form.title" placeholder="请输入标题"></el-input>
         </el-form-item>
-        <el-form-item label="appid" prop="appid">
+        <el-form-item v-if="form.href_type === 2" label="appid" prop="appid">
           <el-select v-model="form.appid" placeholder="请选择">
             <el-option
               v-for="item in appidOptions"
@@ -15,10 +25,12 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="小程序链接" prop="href">
+        <el-form-item v-if="form.href_type === 2" label="小程序链接" prop="href">
           <el-input v-model="form.href" placeholder="请输入小程序链接"></el-input>
         </el-form-item>
-
+        <el-form-item v-if="form.href_type === 3" label="公众号链接" prop="href">
+          <el-input v-model="form.href" placeholder="请输入公众号链接"></el-input>
+        </el-form-item>
         <el-form-item label="封面图" prop="image_url">
           <div class="btns-wrapper">
             <el-upload
@@ -54,10 +66,18 @@ export default {
         title: '',
         appid: '',
         href: '',
-        image_url: ''
+        image_url: '',
+        href_type: 2
       },
       appidOptions,
       fileData: {},
+      options: [{
+        value: 2,
+        label: '其他小程序'
+      }, {
+        value: 3,
+        label: '公众号'
+      }],
       rules: {
         title: [
           {required: true, message: `请输入标题`, trigger: 'blur'}
