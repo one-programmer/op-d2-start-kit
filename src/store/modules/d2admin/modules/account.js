@@ -1,4 +1,5 @@
 import util from '@/libs/util.js'
+import db from '@/plugin/db'
 
 export default {
   namespaced: true,
@@ -14,7 +15,7 @@ export default {
       // 开始请求登录接口
       vm.$axios({
         method: 'post',
-        url: '/api/admin/login/',
+        url: '/api/admin/staff/login/',
         data: {
           username,
           password
@@ -27,11 +28,13 @@ export default {
           // token 代表用户当前登录状态 建议在网络请求中携带 token
           // 如有必要 token 需要定时更新，默认保存一天
           console.log('login', res)
-          util.cookies.set('uuid', res.results.id)
-          util.cookies.set('token', res.results.id)
+          util.cookies.set('uuid', res.user.uid)
+          util.cookies.set('token', res.token)
+          db.set('token', res.token).write()
+          db.set('user', res.user).write()
           // 设置 vuex 用户信息
           commit('d2admin/user/set', {
-            name: res.results.username
+            name: res.user.username
           }, { root: true })
           // 用户登陆后从持久化数据加载一系列的设置
           commit('load')

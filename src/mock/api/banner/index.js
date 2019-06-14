@@ -1,0 +1,70 @@
+// 自动生成的接口RESTful风格的mock代码，方便前端快速调试
+
+import Mock from 'mockjs'
+import _ from 'lodash'
+
+import mockData from './data.json'
+
+const itemDB = Mock.mock(mockData).list
+const restUrl = '/api/admin/banner/banner'
+
+Mock.mock(new RegExp(`^${restUrl}`), 'post', ({url, type, body}) => {
+  const bodyObj = JSON.parse(body)
+  bodyObj.id = _.last(itemDB).id + 1
+  itemDB.push(bodyObj)
+  return {
+    code: 0,
+    msg: 'ok',
+    data: bodyObj
+  }
+})
+
+const detailReg = new RegExp(`^${restUrl}/(\\d+)+`)
+
+const getDetail = (url, detailReg, todoDB) => {
+  const id = Number(detailReg.exec(url)[1])
+  return todoDB.find(item => item.id === id)
+}
+
+Mock.mock(detailReg, 'get', ({url, type, body}) => {
+  const item = getDetail(url, detailReg, itemDB)
+  return {
+    code: 0,
+    msg: 'ok',
+    data: item
+  }
+})
+
+Mock.mock(detailReg, 'put', ({url, type, body}) => {
+  const item = getDetail(url, detailReg, itemDB)
+  return {
+    code: 0,
+    msg: 'ok',
+    data: item
+  }
+})
+
+Mock.mock(detailReg, 'delete', ({url, type, body}) => {
+  const index = Number(detailReg.exec(url)[1]) - 1
+  itemDB.splice(index, 1)
+  return {
+    code: 0,
+    msg: 'ok',
+    data: {}
+  }
+})
+
+const pageReg = new RegExp(`^${restUrl}?(.[\\s\\S]*)`)
+Mock.mock(pageReg, 'get', ({url, type, body}) => {
+  const params = new URLSearchParams(pageReg.exec(url)[1])
+  const page = Number(params.get('page') || 1)
+  const pageSize = Number(params.get('page_size') || 20)
+  console.log('分页', url, page, pageSize)
+  return {
+    count: itemDB.length,
+    has_next: true,
+    page: page,
+    page_size: pageSize,
+    results: itemDB.slice((page - 1) * pageSize, page * pageSize)
+  }
+})

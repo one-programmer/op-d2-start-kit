@@ -1,11 +1,59 @@
 include: 'http://git.xiaoyanzhang.com/one-programmer/templates/raw/master/vue/.gitlab-ci.yml'
 
+variables:
+    DOCKER_CI_REGISTRY: registry-vpc.cn-zhangjiakou.aliyuncs.com/1p
+    IMAGE_NAME: "${DOCKER_CI_REGISTRY}/${CI_PROJECT_NAME}"
+    DEV_URL: http://${CI_PROJECT_NAME}.1programmer.com/
+    PRO1_HOST: tcp://47.103.69.160:22375
+    PRO2_HOST: tcp://47.103.85.240:22375
+
+
 test:
   stage: test
   dependencies:
   - build
   script:
   - docker run --rm "${IMAGE_NAME}:${CI_COMMIT_SHA}" npm run test:unit
+  tags:
+    - dev
+    - shell
+  except:
+    - schedules
+
+
+production1_deploy:
+  stage: deploy
+  script:
+    - docker -H ${PRO1_HOST} build -t "${IMAGE_NAME}:latest" .
+    - docker -H ${PRO1_HOST} image tag "${IMAGE_NAME}:latest" "${IMAGE_NAME}:$CI_COMMIT_SHA"
+    - docker -H ${PRO1_HOST} rm -f $CI_PROJECT_NAME || true
+    - docker -H ${PRO1_HOST} volume rm $CI_PROJECT_NAME || true
+    - docker -H ${PRO1_HOST} run -d --name $CI_PROJECT_NAME --mount source=$CI_PROJECT_NAME,target=/home/app/dist "${IMAGE_NAME}:${CI_COMMIT_SHA}"
+  environment:
+    name: production
+  only:
+    refs:
+      - master
+  tags:
+    - dev
+    - shell
+  except:
+    - schedules
+
+
+production2_deploy:
+  stage: deploy
+  script:
+    - docker -H ${PRO2_HOST} build -t "${IMAGE_NAME}:latest" .
+    - docker -H ${PRO2_HOST} image tag "${IMAGE_NAME}:latest" "${IMAGE_NAME}:$CI_COMMIT_SHA"
+    - docker -H ${PRO2_HOST} rm -f $CI_PROJECT_NAME || true
+    - docker -H ${PRO2_HOST} volume rm $CI_PROJECT_NAME || true
+    - docker -H ${PRO2_HOST} run -d --name $CI_PROJECT_NAME --mount source=$CI_PROJECT_NAME,target=/home/app/dist "${IMAGE_NAME}:${CI_COMMIT_SHA}"
+  environment:
+    name: production
+  only:
+    refs:
+      - master
   tags:
     - dev
     - shell

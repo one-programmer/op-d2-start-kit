@@ -1,0 +1,9 @@
+{
+    "list|90-100": [
+        {
+            "id|+1": 1,
+            "updated_at": "@DATE @TIME",
+            "image_url": "@cparagraph(1)"
+        }
+    ]
+}
